@@ -1,0 +1,7 @@
+numpy==1.23.*
+matplotlib
+opencv-python
+tensorflow==2.7.*
+tensorflow-datasets
+tensorflow-addons
+scikit-learn
