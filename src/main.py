@@ -3,11 +3,13 @@ import shutil
 
 from cnn.Cifar10 import Cifar10
 from cnn.model import build_model
+from cnn.lr_scheduler_fn import schedule_fn, schedule_fn2, schedule_fn3, schedule_fn4
+from cnn.tf_callback import LRTensorBoard
 
 from scipy.stats import randint, uniform
 import numpy as np
 
-from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau, LearningRateScheduler
 from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import ParameterSampler
 
@@ -165,6 +167,31 @@ def train_with_batch_normalization():
 
 
 """
+    Try out different scheduler functions which reduce the learning rate while training the model.
+"""
+
+
+def train_with_lr_scheduler():
+    train_dataset = DATA.get_train_set()
+    val_dataset = DATA.get_val_set()
+    schedule_functions = [schedule_fn, schedule_fn2, schedule_fn3, schedule_fn4]
+
+    for schedule in schedule_functions:
+        lrs_callback = LearningRateScheduler(schedule=schedule, verbose=1)
+        lr_callback = LRTensorBoard(log_dir=os.path.join(LOGS_DIR, f"model_with_scheduler_{schedule.__name__}"),
+                                    histogram_freq=0, profile_batch=0)
+
+        model = build_model(**BEST_PARAMS, use_batch_normalization=False)
+        model.fit(
+            x=train_dataset,
+            batch_size=BATCH_SIZE,
+            epochs=EPOCHS,
+            callbacks=[lrs_callback, lr_callback],
+            validation_data=val_dataset
+        )
+
+
+"""
     Combine all results and make some last adjustments
 """
 
@@ -201,6 +228,7 @@ if __name__ == '__main__':
     if not os.path.exists(LOGS_DIR):
         os.mkdir(LOGS_DIR)
 
-    train_initial_model()
-    train_with_batch_normalization()
-    train_final_model()
+    # train_initial_model()
+    # train_with_batch_normalization()
+    # train_final_model()
+    train_with_lr_scheduler()
