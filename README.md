@@ -2,6 +2,23 @@
 
 This example shows how to train a convolutinal neural network on the cifar10 dataset. I tried to compare different models and experiments to get the best possible performance on accuracy with minimal effort.
 
+## Possible improvements of the network
+
+- Using random search without cross validation to determine good hyper parameter
+- Using dropout rates to prevent overfitting
+- Use batch normalization
+- Adapt learning rates with different lr scheduler functions
+- Use a lr plateau callback to adjust lr by training progess
+- Use early stopping callbacks to prevent unnecessary training epochs
+- Use global pooling instead of just flattening
+- Try and error
+
+## Tensorboard
+
+The performance of the network is analyzed through the tensorboard application.
+
+Run `tensorboard --logdir=./src/logs` to start tensorboard and compare the model performance.
+
 ## About the dataset
 
 This dataset contains 50,000 32x32 color training images and 10,000 test images, labeled over 10 categories.
@@ -20,19 +37,3 @@ This dataset contains 50,000 32x32 color training images and 10,000 test images,
 |7|horse|
 |8|ship|
 |9|truck|
-
-## Possible improvements of the network
-
-- activation functions
-- dropout rates
-- batch normalization
-- learning rates
-- early stopping
-- global pooling
-
-The performance of the network is analysed through tensorboard.
-
-## Performance
-
-- Initial model performance
-![Initial model performance](src/scalars/initial_performance.PNG)
