@@ -190,6 +190,24 @@ def train_with_lr_scheduler():
             validation_data=val_dataset
         )
 
+"""
+    Try out converting the feature map with a global max pooling layer instead of just flattening.
+"""
+def train_with_global_max_pooling_layer():
+    tb_callback = TensorBoard(log_dir=os.path.join(LOGS_DIR, 'model_with_global_max_pooling'),
+                              histogram_freq=0, profile_batch=0)
+    train_dataset = DATA.get_train_set()
+    val_dataset = DATA.get_val_set()
+
+    model = build_model(**BEST_PARAMS, use_batch_normalization=False, use_global_max_pooling=True)
+    model.fit(
+        x=train_dataset,
+        batch_size=BATCH_SIZE,
+        epochs=EPOCHS,
+        callbacks=[tb_callback],
+        validation_data=val_dataset
+    )
+
 
 """
     Combine all results and make some last adjustments
@@ -231,4 +249,5 @@ if __name__ == '__main__':
     # train_initial_model()
     # train_with_batch_normalization()
     # train_final_model()
-    train_with_lr_scheduler()
+    # train_with_lr_scheduler()
+    train_with_global_max_pooling_layer()

@@ -2,7 +2,7 @@ from typing import Tuple
 
 import tensorflow as tf
 
-from tensorflow.keras.layers import Conv2D, Activation, Dense, Flatten, MaxPool2D, Input, BatchNormalization
+from tensorflow.keras.layers import Conv2D, Activation, Dense, Flatten, MaxPool2D, Input, BatchNormalization, GlobalMaxPooling2D
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Model
 
@@ -20,7 +20,8 @@ def build_model(
     dense_layer_size: int,
     activation: str,
     optimizer: tf.keras.optimizers.Optimizer,
-    use_batch_normalization: bool = False
+    use_batch_normalization: bool = False,
+    use_global_max_pooling: bool = False
 ) -> Model:
     input_img = Input(shape=img_shape)
 
@@ -51,8 +52,14 @@ def build_model(
     x = Activation(activation)(x)
     x = MaxPool2D()(x)
 
-    """ Convert to Vector for Dense-Layer"""
-    x = Flatten()(x)
+    """
+        Convert a 4D Tensor to a Vector for the Dense-Layer by using either a flatten layer
+        or an max pooling layer which should remove less important data from the feature map.
+    """
+    if use_global_max_pooling:
+        x = GlobalMaxPooling2D()(x)
+    else:
+        x = Flatten()(x)
     x = Dense(units=dense_layer_size)(x)
     if use_batch_normalization:
         x = BatchNormalization()(x)
